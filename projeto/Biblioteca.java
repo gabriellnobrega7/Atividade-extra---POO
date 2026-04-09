@@ -1,11 +1,10 @@
-    
-  package projeto;
+package projeto;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Biblioteca {
-    
+
     private List<Usuario> usuarios;
     private List<Material> materiais;
     private List<Emprestimo> emprestimos;
@@ -16,8 +15,6 @@ public class Biblioteca {
         this.emprestimos = new ArrayList<>();
     }
 
-    
-
     public void cadastrarUsuario(Usuario u) {
         usuarios.add(u);
     }
@@ -27,27 +24,27 @@ public class Biblioteca {
     }
 
     public Usuario buscarUsuarioPorCodigo(int codigo) {
-        for (int i = 0; i < usuarios.size(); i++) {
-            if (usuarios.get(i).getCodigo() == codigo) {
-                return usuarios.get(i);
+        for (Usuario u : usuarios) {
+            if (u.getCodigo() == codigo) {
+                return u;
             }
         }
         return null;
     }
 
     public Material buscarMaterialPorCodigo(int codigo) {
-        for (int i = 0; i < materiais.size(); i++) {
-            if (materiais.get(i).getCodigo() == codigo) {
-                return materiais.get(i);
+        for (Material m : materiais) {
+            if (m.getCodigo() == codigo) {
+                return m;
             }
         }
         return null;
     }
 
     public Emprestimo buscarEmprestimoPorId(int id) {
-        for (int i = 0; i < emprestimos.size(); i++) {
-            if (emprestimos.get(i).getId() == id) {
-                return emprestimos.get(i);
+        for (Emprestimo e : emprestimos) {
+            if (e.getId() == id) {
+                return e;
             }
         }
         return null;
@@ -55,58 +52,28 @@ public class Biblioteca {
 
     public void realizarEmprestimo(Emprestimo e) {
         emprestimos.add(e);
+        e.getMaterial().reduzirQuantidade();
     }
 
     public void registrarDevolucao(int idEmprestimo, int dataDevolucao) {
         Emprestimo e = buscarEmprestimoPorId(idEmprestimo);
         if (e != null) {
             e.registrarDevolucao(dataDevolucao);
+            e.getMaterial().aumentarQuantidade();
         }
-    }
-
-    public List<Usuario> listarUsuarios() {
-        return usuarios;
-    }
-
-    public List<Material> listarMateriais() {
-        return materiais;
-    }
-
-    public List<Emprestimo> listarEmprestimosEmAndamento() {
-        List<Emprestimo> emAndamento = new ArrayList<>();
-        for (int i = 0; i < emprestimos.size(); i++) {
-            Emprestimo e = emprestimos.get(i);
-            if (!e.estaFinalizado()) {
-                emAndamento.add(e);
-            }
-        }
-        return emAndamento;
-    }
-
-    public List<Emprestimo> listarEmprestimosFinalizados() {
-        List<Emprestimo> finalizados = new ArrayList<>();
-        for (int i = 0; i < emprestimos.size(); i++) {
-            Emprestimo e = emprestimos.get(i);
-            if (e.estaFinalizado()) {
-                finalizados.add(e);
-            }
-        }
-        return finalizados;
     }
 
     public int contarEmprestimosAtivosDeUsuario(int codigoUsuario) {
         int count = 0;
-        Usuario u = buscarUsuarioPorCodigo(codigoUsuario);
-        if (u != null) {
-            for (int i = 0; i < emprestimos.size(); i++) {
-                Emprestimo e = emprestimos.get(i);
-                if (e.getUsuario().equals(u.getNome()) && !e.estaFinalizado()) {
-                    count++;
-                }
+        for (Emprestimo e : emprestimos) {
+            if (e.getUsuario().getCodigo() == codigoUsuario && !e.estaFinalizado()) {
+                count++;
             }
         }
         return count;
     }
 
-    
+    public List<Usuario> getUsuarios() { return usuarios; }
+    public List<Material> getMateriais() { return materiais; }
+    public List<Emprestimo> getEmprestimos() { return emprestimos; }
 }

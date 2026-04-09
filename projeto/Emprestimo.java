@@ -1,79 +1,44 @@
- package projeto;
+package projeto;
 
 public class Emprestimo implements IExibivel, ICalculavelMulta {
-    
     private int id;
-    private String usuario;
-    private String tipoUsuario; 
-    private String material;
-    private int data;          
-    private int dataPrevista;  
-    private int dataReal;     
+    private Usuario usuario;
+    private Material material;
+    private int dataEmprestimo;
+    private int dataPrevista;
+    private int dataReal;
 
-    public Emprestimo(int id, String usuario, String tipoUsuario, String material, int data, int dataPrevista) {
+    public Emprestimo(int id, Usuario usuario, Material material, int dataHoje) {
         this.id = id;
         this.usuario = usuario;
-        this.tipoUsuario = tipoUsuario;
         this.material = material;
-        this.data = data;
-        this.dataPrevista = dataPrevista;
-        this.dataReal = -1; 
+        this.dataEmprestimo = dataHoje;
+        this.dataPrevista = dataHoje + usuario.prazoDeDevolucao();
+        this.dataReal = -1;
     }
 
-    public void registrarDevolucao(int dataDevolucao) {
-        this.dataReal = dataDevolucao;
-    }
-    public boolean estaFinalizado() {
-        return dataReal != -1;
+    public void registrarDevolucao(int diaDevolucao) {
+        this.dataReal = diaDevolucao;
+        this.material.aumentarQuantidade(); 
     }
 
-    public int calcularDiasAtraso() {
-        if (estaFinalizado() && dataReal > dataPrevista) {
-            return dataReal - dataPrevista;
-        }
-        return 0;
-    }
+    public boolean estaFinalizado() { return dataReal != -1; }
 
-    @Override
     public double CalcularMulta() {
-        int diasAtraso = calcularDiasAtraso();
-        double valorPorDia;
-
-        if ("Aluno".equalsIgnoreCase(tipoUsuario)) {
-            valorPorDia = 2.50;
-        } else if ("Professor".equalsIgnoreCase(tipoUsuario)) {
-            valorPorDia = 1.00;
-        } else {
-            valorPorDia = 2.00;
+        if (!estaFinalizado() || dataReal <= dataPrevista) {
+            return 0.0;
         }
-
-        return diasAtraso * valorPorDia;
+        int diasAtraso = dataReal - dataPrevista;
+        return diasAtraso * usuario.valordaMulta();
     }
-    @Override
+
     public String exibirResumo() {
-        return "Empréstimo ID: " + id +
-               " | Usuário: " + usuario +
-               " (" + tipoUsuario + ")" +
-               " | Material: " + material +
-               " | Data: " + data +
-               " | Prevista: " + dataPrevista +
-               " | Devolução: " + (estaFinalizado() ? dataReal : "não devolvido") +
-               " | Multa: R$ " + CalcularMulta();
+        String status = estaFinalizado() ? "Devolvido no dia " + dataReal : "Em aberto (Previsto: " + dataPrevista + ")";
+        return "ID: " + id + " | Usuário: " + usuario.getNome() + " | Material: " + material.getTitulo() + 
+               " | Status: " + status + " | Multa: R$ " + CalcularMulta();
     }
 
-    public int getId() {
-    return id;
-    }
-
-
-    public void setId(int id) {
-        this.id = id;
-    }
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
+    public int getId() { return id; }
+    public Usuario getUsuario() { return usuario; }
+    public Material getMaterial() { return material; }
 }
