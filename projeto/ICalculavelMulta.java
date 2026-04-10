@@ -1,8 +1,5 @@
-  package projeto;
+package projeto;
 
-public interface ICalculavelMulta{
-
+public interface ICalculavelMulta {
     double CalcularMulta();
-
-
 }

@@ -1,6 +1,6 @@
   package projeto;
 
-public class Ebook extends Material{
+public class Ebook extends Material implements IExibivel{
     
     private String formato;
     private double tamanhoArquivo;
@@ -26,16 +26,12 @@ public class Ebook extends Material{
         this.tamanhoArquivo = tamanhoArquivo;
     }
 
-    @Override
     public String getInformacoes() {
-         return "T´tulo da revista: " + getTitulo() + " " + "Formato: " + formato + "Tamanho do arquivo: " + tamanhoArquivo;
+         return "Título: " + getTitulo() + " " + "Formato: " + formato + "Tamanho: " + tamanhoArquivo;
     }
 
-    @Override
     public String exibirResumo() {
-        
         return getTitulo() + " - " + formato;
-
     }
 
 }
